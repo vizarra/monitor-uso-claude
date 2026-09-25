@@ -66,4 +66,4 @@ jobs:
           prerelease: false
           # Nombres sin versión para que los enlaces del README
           # (releases/latest/download/...) sirvan para todas las versiones.
-          releaseAssetNamePattern: "monitor-uso-claude_[platform]_[arch][setup][ext]"
+          assetNamePattern: "monitor-uso-claude_[platform]_[arch][setup][ext]"
