@@ -1,0 +1,53 @@
+{
+  "data": [
+    {
+      "starting_at": "2026-09-01T00:00:00Z",
+      "ending_at": "2026-09-02T00:00:00Z",
+      "results": [
+        {
+          "uncached_input_tokens": 1500,
+          "cache_creation": { "ephemeral_5m_input_tokens": 300, "ephemeral_1h_input_tokens": 0 },
+          "cache_read_input_tokens": 200,
+          "output_tokens": 500,
+          "server_tool_use": { "web_search_requests": 0 },
+          "model": null,
+          "api_key_id": null,
+          "workspace_id": null,
+          "service_tier": null,
+          "context_window": null,
+          "inference_geo": null,
+          "account_id": null,
+          "service_account_id": null
+        }
+      ]
+    },
+    {
+      "starting_at": "2026-09-02T00:00:00Z",
+      "ending_at": "2026-09-03T00:00:00Z",
+      "results": []
+    },
+    {
+      "starting_at": "2026-09-03T00:00:00Z",
+      "ending_at": "2026-09-04T00:00:00Z",
+      "results": [
+        {
+          "uncached_input_tokens": 500,
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 100 },
+          "cache_read_input_tokens": 0,
+          "output_tokens": 250,
+          "server_tool_use": { "web_search_requests": 2 },
+          "model": null,
+          "api_key_id": null,
+          "workspace_id": null,
+          "service_tier": null,
+          "context_window": null,
+          "inference_geo": null,
+          "account_id": null,
+          "service_account_id": null
+        }
+      ]
+    }
+  ],
+  "has_more": false,
+  "next_page": null
+}

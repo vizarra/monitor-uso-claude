@@ -1,0 +1,64 @@
+/* Mini-widget: mismo diseño que el icono de la bandeja (src-tauri/src/icon.rs). */
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+}
+
+#widget {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.disc {
+  fill: #1f2328;
+}
+
+.track,
+.progress {
+  fill: none;
+  stroke-width: 12;
+}
+
+.track {
+  stroke: rgb(128 128 128 / 55%);
+}
+
+/* El arco empieza a las 12 y avanza en sentido horario. */
+.progress {
+  transform: rotate(-90deg);
+  transform-origin: 32px 32px;
+  transition: stroke-dasharray 0.4s ease;
+}
+
+.progress.low {
+  stroke: #22c55e;
+}
+.progress.medium {
+  stroke: #f59e0b;
+}
+.progress.high {
+  stroke: #ef4444;
+}
+
+.dash {
+  fill: #dcdcdc;
+}
+
+text {
+  fill: #fff;
+  font: 700 17px system-ui, "Segoe UI", sans-serif;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}

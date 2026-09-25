@@ -1,0 +1,36 @@
+# Rust / Tauri
+/target/
+src-tauri/target/
+src-tauri/gen/schemas/
+**/*.rs.bk
+
+# Node / Vite
+node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Entorno y secretos
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Salidas de scripts locales (pueden contener datos reales)
+scripts/**/out/
+
+# Configuración local de Claude Code
+.claude/settings.local.json
+
+# Editores y SO
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

@@ -1,0 +1,45 @@
+[package]
+name = "monitor-uso-claude"
+version = "0.1.1"
+description = "Monitor no oficial del uso de Claude en la bandeja del sistema"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[lib]
+# Nombre distinto al del binario para evitar choques en Windows.
+name = "monitor_uso_claude_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+dirs = "6"
+# TLS con rustls (sin OpenSSL del sistema); sin proxy del sistema ni HTTP/2.
+reqwest = { version = "0.13", default-features = false, features = ["rustls"] }
+# Admin key en el llavero del SO: Credential Manager, Keychain o Secret Service.
+keyring = "4"
+tokio = { version = "1", features = ["time", "sync", "rt", "macros"] }
+# Sin `png-format`: la app pasa los píxeles a Tauri directamente.
+tiny-skia = { version = "0.12", default-features = false, features = ["std", "simd"] }
+# Plugins oficiales de Tauri: alertas por umbral y arranque con el sistema.
+tauri-plugin-notification = "2"
+tauri-plugin-autostart = "2"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["test-util"] }
+# En tests sí se guarda PNG, para revisar el icono a ojo.
+tiny-skia = { version = "0.12", default-features = false, features = ["std", "simd", "png-format"] }
+
+[profile.release]
+# App residente: priorizamos tamaño y consumo sobre tiempo de compilación.
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true
+# Sin `panic = "abort"`: el scheduler aísla el pánico de un proveedor en su
+# propia tarea, y eso solo funciona si el pánico puede desenrollarse.

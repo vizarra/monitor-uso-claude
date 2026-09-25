@@ -1,0 +1,4 @@
+{"type":"assistant","uuid":"a-1","sessionId":"sess-0002","requestId":"req_X","timestamp":"2026-09-20T12:00:00.000Z","isSidechain":false,"message":{"id":"msg_X","role":"assistant","model":"claude-sonnet-5","content":[],"usage":{"input_tokens":7,"output_tokens":3,"cache_creation_input_tokens":0,"cache_read_input_tokens":0}}}
+esto no es JSON
+{"type":"assistant","uuid":"a-2","sessionId":"sess-0002","requestId":"req_Y","timestamp":"no-es-una-fecha","message":{"id":"msg_Y","role":"assistant","content":[],"usage":{"input_tokens":1,"output_tokens":1}}}
+{"type":"assistant","uuid":"a-3","sessionId":"sess-0002","requestId":"req_Z","timestamp":"2026-09-20T12:01:00.000Z","message":{"id":"msg_Z","role":"assistant","model":"claude-sonnet-5","content":[],"usage":{"input_tokens":4,"output_tok

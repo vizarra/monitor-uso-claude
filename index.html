@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monitor de uso de Claude</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+    <script type="module" src="/src/main.ts"></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1 id="title">Uso de Claude</h1>
+        <div class="actions">
+          <button id="refresh" type="button" title="Actualizar">Actualizar</button>
+          <button id="toggle-settings" type="button" title="Ajustes" aria-label="Ajustes">⚙</button>
+        </div>
+      </header>
+
+      <div id="pin-hint" class="hint-box" hidden>
+        <p>¿No ves el icono en la barra de tareas? Windows esconde los iconos nuevos en el desplegable (^).</p>
+        <div class="row">
+          <button id="open-taskbar" type="button">Abrir configuración</button>
+          <button id="dismiss-pin-hint" type="button" class="link">No volver a mostrar</button>
+        </div>
+        <p class="hint">Lo más fiable: arrastra el anillo desde el desplegable (^) y suéltalo justo al lado de los iconos de red o sonido. También puedes activarlo en «Otros iconos de la bandeja del sistema», aunque en Windows 11 no siempre funciona.</p>
+      </div>
+
+      <div id="sections"></div>
+
+      <form id="settings" hidden>
+        <fieldset>
+          <legend>Consulta</legend>
+          <label class="row">
+            Cada
+            <select id="interval">
+              <option value="60">1 min</option>
+              <option value="120">2 min</option>
+              <option value="180">3 min</option>
+              <option value="300">5 min</option>
+              <option value="600">10 min</option>
+              <option value="900">15 min</option>
+              <option value="1800">30 min</option>
+              <option value="3600">60 min</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Secciones visibles</legend>
+          <label><input type="checkbox" id="show-subscription" /> Plan Pro/Max</label>
+          <label><input type="checkbox" id="show-tokens" /> Claude Code</label>
+          <label><input type="checkbox" id="show-api" /> API</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Icono</legend>
+          <label><input type="checkbox" id="show-percent" /> Mostrar el porcentaje en el icono</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Alertas</legend>
+          <label class="row">
+            Avisar al llegar al
+            <input id="alert-thresholds" type="text" inputmode="numeric" placeholder="80, 95" size="8" />
+            %
+          </label>
+          <p class="hint">Hasta tres valores separados por comas; vacío para no avisar. Un aviso por ventana.</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Sistema</legend>
+          <label><input type="checkbox" id="launch-at-login" /> Arrancar al iniciar sesión</label>
+          <label><input type="checkbox" id="show-widget" /> Mini-widget flotante (para otras pantallas)</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>API (Admin key)</legend>
+          <p class="hint">Solo para cuentas de organización. La clave se guarda en el llavero del sistema.</p>
+          <p id="key-status" class="hint">Comprobando…</p>
+          <div class="row">
+            <input id="admin-key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-admin…" />
+            <button id="save-key" type="button">Guardar</button>
+          </div>
+          <button id="clear-key" type="button" class="link" hidden>Borrar la clave</button>
+        </fieldset>
+
+        <p id="settings-message" class="message" role="status"></p>
+      </form>
+
+      <footer>Herramienta personal no oficial</footer>
+    </main>
+  </body>
+</html>
