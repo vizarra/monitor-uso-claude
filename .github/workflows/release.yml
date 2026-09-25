@@ -49,7 +49,21 @@ jobs:
           tagName: ${{ github.ref_name }}
           releaseName: Monitor de uso de Claude ${{ github.ref_name }}
           releaseBody: |
+            **¿Qué archivo descargo?**
+
+            | Sistema | Archivo |
+            | --- | --- |
+            | Windows 10/11 | el que termina en `-setup.exe` |
+            | macOS (Apple Silicon: M1, M2…) | el `.dmg` |
+            | Linux (Debian/Ubuntu) | el `.deb` |
+            | Linux (Fedora/openSUSE) | el `.rpm` |
+            | Linux (otras distribuciones) | el `.AppImage` |
+
+            Los instaladores no están firmados: la primera vez el sistema mostrará un aviso. Cómo continuar, en el [README](https://github.com/vizarra/monitor-uso-claude#instalación).
+
             Herramienta personal no oficial, sin relación con Anthropic.
-            Instrucciones de instalación y avisos (instaladores sin firmar) en el README.
           releaseDraft: true
           prerelease: false
+          # Nombres sin versión para que los enlaces del README
+          # (releases/latest/download/...) sirvan para todas las versiones.
+          releaseAssetNamePattern: "monitor-uso-claude_[platform]_[arch][setup][ext]"
