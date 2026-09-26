@@ -31,19 +31,17 @@
       <form id="settings" hidden>
         <fieldset>
           <legend>Consulta</legend>
-          <label class="row">
-            Cada
-            <select id="interval">
-              <option value="60">1 min</option>
-              <option value="120">2 min</option>
-              <option value="180">3 min</option>
-              <option value="300">5 min</option>
-              <option value="600">10 min</option>
-              <option value="900">15 min</option>
-              <option value="1800">30 min</option>
-              <option value="3600">60 min</option>
-            </select>
-          </label>
+          <p class="hint">Cada cuántos minutos:</p>
+          <div class="segmented" role="radiogroup" aria-label="Intervalo de consulta en minutos">
+            <label><input type="radio" name="interval" value="60" /><span>1</span></label>
+            <label><input type="radio" name="interval" value="120" /><span>2</span></label>
+            <label><input type="radio" name="interval" value="180" /><span>3</span></label>
+            <label><input type="radio" name="interval" value="300" /><span>5</span></label>
+            <label><input type="radio" name="interval" value="600" /><span>10</span></label>
+            <label><input type="radio" name="interval" value="900" /><span>15</span></label>
+            <label><input type="radio" name="interval" value="1800" /><span>30</span></label>
+            <label><input type="radio" name="interval" value="3600" /><span>60</span></label>
+          </div>
         </fieldset>
 
         <fieldset>
@@ -73,14 +71,13 @@
           <label><input type="checkbox" id="launch-at-login" /> Arrancar al iniciar sesión</label>
           <label><input type="checkbox" id="show-widget" /> Mini-widget flotante (para otras pantallas)</label>
           <label><input type="checkbox" id="show-percent-widget" /> Mostrar el porcentaje en el widget</label>
-          <label class="row">
-            Tamaño del widget
-            <select id="widget-size">
-              <option value="small">Pequeño</option>
-              <option value="medium">Mediano</option>
-              <option value="large">Grande</option>
-            </select>
-          </label>
+          <p class="hint">Tamaño del widget:</p>
+          <div class="segmented" role="radiogroup" aria-label="Tamaño del widget">
+            <label><input type="radio" name="widget-size" value="mini" /><span>Mini</span></label>
+            <label><input type="radio" name="widget-size" value="small" /><span>Pequeño</span></label>
+            <label><input type="radio" name="widget-size" value="medium" /><span>Mediano</span></label>
+            <label><input type="radio" name="widget-size" value="large" /><span>Grande</span></label>
+          </div>
         </fieldset>
 
         <fieldset>
@@ -102,6 +99,7 @@
             <button id="check-update" type="button">Buscar actualizaciones</button>
             <button id="install-update" type="button" hidden>Instalar y reiniciar</button>
           </div>
+          <p id="update-status" class="hint" role="status"></p>
           <p class="hint">Proyecto personal no oficial, sin relación con Anthropic.</p>
         </fieldset>
 

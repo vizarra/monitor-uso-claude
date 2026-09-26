@@ -546,11 +546,37 @@ fn main_window(app: &AppHandle) -> Option<WebviewWindow> {
         .windows
         .iter()
         .find(|w| w.label == WINDOW_LABEL)?;
-    WebviewWindowBuilder::from_config(app, config)
+    let window = WebviewWindowBuilder::from_config(app, config)
         .ok()?
         .build()
-        .ok()
+        .ok()?;
+    apply_glass(&window);
+    Some(window)
 }
+
+/// Cristal de la ventana de detalle: efecto Acrylic de Windows con un tinte
+/// según el tema (blanco en claro, gris oscuro en oscuro). La ventana es
+/// transparente (`tauri.conf.json`) y el frontend pinta encima fondos
+/// translúcidos solo en Windows 11; en el resto mantiene el fondo sólido.
+/// Tauri ignora el efecto en Linux y en macOS.
+#[cfg(target_os = "windows")]
+fn apply_glass(window: &WebviewWindow) {
+    use tauri::window::{Color, Effect, EffectsBuilder};
+    let dark = matches!(window.theme(), Ok(tauri::Theme::Dark));
+    let tint = if dark {
+        Color(32, 32, 36, 150)
+    } else {
+        Color(255, 255, 255, 200)
+    };
+    let effects = EffectsBuilder::new()
+        .effect(Effect::Acrylic)
+        .color(tint)
+        .build();
+    let _ = window.set_effects(effects);
+}
+
+#[cfg(not(target_os = "windows"))]
+fn apply_glass(_window: &WebviewWindow) {}
 
 fn show_window(app: &AppHandle, rect: Option<tauri::Rect>) {
     let Some(window) = main_window(app) else {

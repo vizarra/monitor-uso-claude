@@ -1,6 +1,6 @@
 [package]
 name = "monitor-uso-claude"
-version = "0.1.4"
+version = "0.1.5"
 description = "Monitor no oficial del uso de Claude en la bandeja del sistema"
 edition = "2021"
 license = "MIT"

@@ -9,7 +9,16 @@
   <body>
     <div id="widget" title="Uso de Claude — clic para abrir, arrastrar para mover">
       <svg viewBox="0 0 64 64" aria-hidden="true">
+        <defs>
+          <!-- Brillo de "cristal": más claro arriba que abajo. -->
+          <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#fff" stop-opacity="0.32" />
+            <stop offset="0.55" stop-color="#fff" stop-opacity="0.06" />
+            <stop offset="1" stop-color="#fff" stop-opacity="0.02" />
+          </linearGradient>
+        </defs>
         <circle class="disc" cx="32" cy="32" r="20" />
+        <circle class="sheen" cx="32" cy="32" r="19.5" />
         <circle class="track" cx="32" cy="32" r="26" />
         <circle id="progress" class="progress" cx="32" cy="32" r="26" />
         <rect id="dash" class="dash" x="24" y="29" width="16" height="6" rx="1" />

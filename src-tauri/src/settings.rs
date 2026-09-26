@@ -28,6 +28,7 @@ const MAX_THRESHOLDS: usize = 3;
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum WidgetSize {
+    Mini,
     Small,
     Large,
     /// También se usa si el JSON trae un valor desconocido, para no perder
@@ -41,6 +42,7 @@ impl WidgetSize {
     /// Lado del widget en píxeles lógicos.
     pub fn logical_px(self) -> f64 {
         match self {
+            Self::Mini => 32.0,
             Self::Small => 40.0,
             Self::Medium => 52.0,
             Self::Large => 64.0,
@@ -213,6 +215,7 @@ mod tests {
         let s = Settings::default();
         assert!(s.show_percent_in_widget);
         assert_eq!(s.widget_size, WidgetSize::Medium);
+        assert_eq!(WidgetSize::Mini.logical_px(), 32.0);
         assert_eq!(WidgetSize::Small.logical_px(), 40.0);
         assert_eq!(WidgetSize::Medium.logical_px(), 52.0);
         assert_eq!(WidgetSize::Large.logical_px(), 64.0);
@@ -235,6 +238,8 @@ mod tests {
         assert_eq!(json, r#""large""#);
         let s: Settings = serde_json::from_str(r#"{"widgetSize": "small"}"#).expect("parsear");
         assert_eq!(s.widget_size, WidgetSize::Small);
+        let s: Settings = serde_json::from_str(r#"{"widgetSize": "mini"}"#).expect("parsear");
+        assert_eq!(s.widget_size, WidgetSize::Mini);
         // Un valor desconocido no invalida el resto de ajustes.
         let s: Settings = serde_json::from_str(r#"{"widgetSize": "enorme", "intervalSecs": 600}"#)
             .expect("parsear");

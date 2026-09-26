@@ -38,10 +38,10 @@ interface Settings {
   pinHintDismissed: boolean;
 }
 
-type WidgetSize = "small" | "medium" | "large";
+type WidgetSize = "mini" | "small" | "medium" | "large";
 
-function parseWidgetSize(value: string): WidgetSize {
-  return value === "small" || value === "large" ? value : "medium";
+function parseWidgetSize(value: string | null): WidgetSize {
+  return value === "mini" || value === "small" || value === "large" ? value : "medium";
 }
 
 const TITLES: Record<ProviderId, string> = {
@@ -146,8 +146,20 @@ function showMessage(text: string, isError = false): void {
   node.classList.toggle("error", isError);
 }
 
+// Grupos de botones de opción en lugar de <select>: en Linux, el desplegable
+// de WebKitGTK es una ventana aparte que quita el foco y cierra la ventana.
+function checkRadio(name: string, value: string): void {
+  for (const input of document.querySelectorAll<HTMLInputElement>(`input[name="${name}"]`)) {
+    input.checked = input.value === value;
+  }
+}
+
+function checkedRadio(name: string): string | null {
+  return document.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`)?.value ?? null;
+}
+
 function fillSettingsForm(s: Settings): void {
-  $<HTMLSelectElement>("#interval").value = String(s.intervalSecs);
+  checkRadio("interval", String(s.intervalSecs));
   $<HTMLInputElement>("#show-subscription").checked = s.showSubscription;
   $<HTMLInputElement>("#show-tokens").checked = s.showTokens;
   $<HTMLInputElement>("#show-api").checked = s.showApi;
@@ -156,7 +168,7 @@ function fillSettingsForm(s: Settings): void {
   $<HTMLInputElement>("#launch-at-login").checked = s.launchAtLogin;
   $<HTMLInputElement>("#show-widget").checked = s.showWidget;
   $<HTMLInputElement>("#show-percent-widget").checked = s.showPercentInWidget;
-  $<HTMLSelectElement>("#widget-size").value = s.widgetSize;
+  checkRadio("widget-size", s.widgetSize);
 }
 
 // Convierte "80, 95" en [80, 95]; el backend valida el rango y el orden.
@@ -169,7 +181,8 @@ function parseThresholds(text: string): number[] {
 
 function readSettingsForm(): Settings {
   return {
-    intervalSecs: Number($<HTMLSelectElement>("#interval").value),
+    // Si el intervalo guardado no está entre los botones, se conserva.
+    intervalSecs: Number(checkedRadio("interval") ?? settings?.intervalSecs ?? 180),
     showSubscription: $<HTMLInputElement>("#show-subscription").checked,
     showTokens: $<HTMLInputElement>("#show-tokens").checked,
     showApi: $<HTMLInputElement>("#show-api").checked,
@@ -178,7 +191,7 @@ function readSettingsForm(): Settings {
     launchAtLogin: $<HTMLInputElement>("#launch-at-login").checked,
     showWidget: $<HTMLInputElement>("#show-widget").checked,
     showPercentInWidget: $<HTMLInputElement>("#show-percent-widget").checked,
-    widgetSize: parseWidgetSize($<HTMLSelectElement>("#widget-size").value),
+    widgetSize: parseWidgetSize(checkedRadio("widget-size")),
     pinHintDismissed: settings?.pinHintDismissed ?? false,
   };
 }
@@ -246,22 +259,29 @@ async function dismissPinHint(): Promise<void> {
 }
 
 // Solo se consulta GitHub al pulsar el botón; nunca en segundo plano.
+// El estado se muestra junto a los botones, en "Acerca de".
+function showUpdateStatus(text: string, isError = false): void {
+  const node = $<HTMLParagraphElement>("#update-status");
+  node.textContent = text;
+  node.classList.toggle("error", isError);
+}
+
 async function checkUpdate(): Promise<void> {
   const check = $<HTMLButtonElement>("#check-update");
   const install = $<HTMLButtonElement>("#install-update");
   check.disabled = true;
   install.hidden = true;
-  showMessage("Buscando actualizaciones…");
+  showUpdateStatus("Buscando actualizaciones…");
   try {
     const version = await invoke<string | null>("check_update");
     if (version === null) {
-      showMessage("Ya tienes la última versión");
+      showUpdateStatus("Ya tienes la última versión.");
     } else {
-      showMessage(`Hay una versión nueva: ${version}`);
+      showUpdateStatus(`Hay una versión nueva: ${version}.`);
       install.hidden = false;
     }
   } catch (e) {
-    showMessage(String(e), true);
+    showUpdateStatus(String(e), true);
   } finally {
     check.disabled = false;
   }
@@ -272,11 +292,11 @@ async function installUpdate(): Promise<void> {
   const install = $<HTMLButtonElement>("#install-update");
   check.disabled = true;
   install.disabled = true;
-  showMessage("Descargando e instalando… la app se reiniciará");
+  showUpdateStatus("Descargando e instalando… la app se reiniciará.");
   try {
     await invoke("install_update");
   } catch (e) {
-    showMessage(String(e), true);
+    showUpdateStatus(String(e), true);
     install.hidden = true;
   } finally {
     check.disabled = false;
@@ -298,7 +318,29 @@ function toggleSettings(): void {
   if (opening) void refreshKeyStatus();
 }
 
+// El cristal (Acrylic detrás y fondos translúcidos encima) solo se muestra
+// en Windows 11. En Linux y macOS la ventana no recibe el efecto, y en
+// Windows 10 Acrylic va a tirones, así que ahí se mantiene el fondo sólido.
+// Windows 11 se reconoce por `platformVersion` 13 o superior (método que
+// documenta Microsoft).
+interface UserAgentData {
+  platform: string;
+  getHighEntropyValues(hints: string[]): Promise<{ platformVersion?: string }>;
+}
+
+async function isWindows11(): Promise<boolean> {
+  const uad = (navigator as Navigator & { userAgentData?: UserAgentData }).userAgentData;
+  if (uad?.platform !== "Windows") return false;
+  try {
+    const { platformVersion } = await uad.getHighEntropyValues(["platformVersion"]);
+    return Number.parseInt(platformVersion ?? "0", 10) >= 13;
+  } catch {
+    return false;
+  }
+}
+
 window.addEventListener("DOMContentLoaded", async () => {
+  if (await isWindows11()) document.documentElement.classList.add("glass");
   $<HTMLButtonElement>("#refresh").addEventListener("click", () => {
     void invoke("refresh_now");
   });

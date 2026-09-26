@@ -19,6 +19,57 @@
   }
 }
 
+/* Cristal (solo Windows 11, ver `isWindows11` en main.ts): la ventana es
+   transparente y lleva detrás el efecto Acrylic del sistema (`apply_glass`
+   en lib.rs); la interfaz se pinta con fondos translúcidos para que se vea.
+   Valores elegidos por el usuario con un panel de ajuste en la v0.1.5. */
+:root.glass {
+  --bg: rgb(255 255 255 / 15%);
+  --border: rgb(0 0 0 / 10%);
+  /* Gris más oscuro: sobre el cristal el de siempre pierde contraste. */
+  --muted: #4b5563;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root.glass {
+    --bg: rgb(28 31 36 / 15%);
+    --border: rgb(255 255 255 / 10%);
+    /* Gris claro: el oscuro del cristal claro no se ve sobre fondo oscuro. */
+    --muted: #c3c8d0;
+  }
+}
+
+:root.glass,
+:root.glass body {
+  background: transparent;
+}
+
+:root.glass main {
+  /* Brillo de cristal: más claro arriba, con borde fino claro. */
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 67%) 0%,
+    rgb(255 255 255 / 33%) 45%,
+    rgb(255 255 255 / 30%) 100%
+  );
+  border: 1px solid rgb(255 255 255 / 100%);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 60%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root.glass main {
+    background: linear-gradient(
+      180deg,
+      rgb(255 255 255 / 14%) 0%,
+      rgb(255 255 255 / 5%) 45%,
+      rgb(255 255 255 / 2%) 100%
+    );
+    border-color: rgb(255 255 255 / 22%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 25%);
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -27,6 +78,8 @@ html,
 body {
   margin: 0;
   height: 100%;
+  /* Solo se desplazan las secciones y los ajustes, nunca la página. */
+  overflow: hidden;
   background: var(--bg);
   color: var(--fg);
   user-select: none;
@@ -172,7 +225,6 @@ label {
   gap: 6px;
 }
 
-select,
 input[type="password"] {
   font: inherit;
   color: var(--fg);
@@ -191,6 +243,55 @@ input[type="password"] {
 .hint {
   font-size: 0.8rem;
   color: var(--muted);
+}
+
+.hint.error {
+  color: #dc2626;
+}
+
+/* Grupo de botones de opción con aspecto de botones: el círculo del radio
+   se oculta pero sigue siendo accesible con el teclado. */
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.segmented label {
+  gap: 0;
+  /* Contiene el radio oculto: sin esto, el radio se coloca respecto a la
+     página y al enfocarlo la desplaza entera. */
+  position: relative;
+}
+
+.segmented input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+
+.segmented span {
+  min-width: 2.2em;
+  text-align: center;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+
+.segmented input:checked + span {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.segmented input:focus-visible + span {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
 button.link {

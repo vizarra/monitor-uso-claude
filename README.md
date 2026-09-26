@@ -31,6 +31,7 @@ Los instaladores no están firmados, así que la primera vez el sistema mostrar�
 - **Pasa el ratón** por encima para ver un resumen, o **haz clic** para abrir la ventana con el desglose. La ventana se cierra al hacer clic fuera.
 - **⟳ Recargar datos** (en la ventana, o con clic derecho en el icono): consulta al momento, aunque la sonda esté en pausa.
 - **Clic derecho:** Abrir, Recargar datos y Salir.
+- **En Windows 11**, la ventana tiene aspecto de cristal: deja ver desenfocado lo que hay detrás, con un tono claro u oscuro según el tema de Windows. En Windows 10, Linux y macOS se ve con fondo sólido.
 - **⚙ Ajustes:** intervalo de consulta (de 1 a 60 min), secciones visibles, número dentro del icono, alertas, arranque con el sistema, mini-widget (con su tamaño y su número), Admin key y "Acerca de" (versión, enlace al repo y actualizaciones).
 
 ### Actualizaciones
@@ -48,7 +49,7 @@ Por defecto se avisa con una notificación del sistema al llegar al **80 %** y a
 
 Windows 11 solo muestra la bandeja en la barra de la **pantalla principal**. Si trabajas en otra pantalla, activa en Ajustes → Sistema el **mini-widget flotante**: un anillo pequeño, siempre visible, que puedes arrastrar a cualquier pantalla. Con un clic abre la ventana de detalle.
 
-El anillo refleja el uso de la sesión con los mismos colores que el icono, y en el centro muestra el porcentaje (se puede quitar con "Mostrar el porcentaje en el widget"). Hay tres tamaños: pequeño, mediano (por defecto) y grande.
+El anillo refleja el uso de la sesión con los mismos colores que el icono, y en el centro muestra el porcentaje (se puede quitar con "Mostrar el porcentaje en el widget"). Hay cuatro tamaños: mini, pequeño, mediano (por defecto) y grande.
 
 ## Instalación
 

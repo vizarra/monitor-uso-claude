@@ -22,7 +22,15 @@ svg {
 }
 
 .disc {
-  fill: #1f2328;
+  fill: rgb(20 22 26 / 62%);
+}
+
+/* Capa de brillo con borde fino claro: efecto cristal sin desenfoque real
+   (los efectos del sistema se aplicarían a toda la ventana, que es cuadrada). */
+.sheen {
+  fill: url(#sheen);
+  stroke: rgb(255 255 255 / 35%);
+  stroke-width: 1;
 }
 
 .track,
@@ -32,7 +40,7 @@ svg {
 }
 
 .track {
-  stroke: rgb(128 128 128 / 55%);
+  stroke: rgb(160 160 160 / 40%);
 }
 
 /* El arco empieza a las 12 y avanza en sentido horario. */
@@ -58,6 +66,10 @@ svg {
 
 text {
   fill: #fff;
+  /* Contorno oscuro para que el número se lea sobre el disco translúcido. */
+  paint-order: stroke;
+  stroke: rgb(0 0 0 / 45%);
+  stroke-width: 2px;
   font: 700 17px system-ui, "Segoe UI", sans-serif;
   text-anchor: middle;
   dominant-baseline: middle;
