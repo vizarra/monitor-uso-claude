@@ -54,7 +54,7 @@ Valores de ejemplo sintéticos:
 
 | Cabecera | Ejemplo | Significado |
 | --- | --- | --- |
-| `anthropic-ratelimit-unified-5h-utilization` | `0.42` | Fracción usada de la ventana de 5 h (0–1). Porcentaje = valor × 100 |
+| `anthropic-ratelimit-unified-5h-utilization` | `0.42` | Fracción usada de la ventana de 5 h (0–1). Porcentaje = valor × 100, redondeado hacia arriba al mostrarlo (como claude.ai) |
 | `anthropic-ratelimit-unified-5h-reset` | `1790000000` | Reinicio de la ventana de 5 h (segundos Unix) |
 | `anthropic-ratelimit-unified-5h-status` | `allowed` | Estado de la ventana de 5 h |
 | `anthropic-ratelimit-unified-7d-utilization` | `0.61` | Fracción usada del límite semanal (0–1) |

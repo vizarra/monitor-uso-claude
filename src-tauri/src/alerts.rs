@@ -44,8 +44,8 @@ impl Alert {
 
     pub fn body(&self) -> String {
         format!(
-            "Llevas un {:.0} % de uso. Se avisa una sola vez por ventana.",
-            self.percent.clamp(0.0, 100.0)
+            "Llevas un {} % de uso. Se avisa una sola vez por ventana.",
+            crate::icon::displayed_percent(self.percent)
         )
     }
 }
@@ -68,10 +68,13 @@ pub fn check(
     let window = window_reset_ms.unwrap_or(0);
     fired.retain(|f| f.limit != limit || f.window_reset_ms == window);
 
+    // Se compara con el número que ve el usuario (redondeado hacia arriba):
+    // si el icono dice "80 %", el aviso del 80 ya ha saltado.
+    let shown = crate::icon::displayed_percent(percent);
     let mut highest = None;
     for &t in thresholds {
         let already = fired.iter().any(|f| f.limit == limit && f.threshold == t);
-        if percent >= f64::from(t) && !already {
+        if shown >= t && !already {
             fired.push(Fired {
                 limit,
                 threshold: t,
@@ -143,6 +146,17 @@ mod tests {
     }
 
     #[test]
+    fn fires_when_displayed_number_reaches_threshold() {
+        // 79,2 se muestra como 80 %: el aviso del 80 debe saltar ya.
+        let mut fired = Vec::new();
+        let a = check(&mut fired, Limit::Session, 79.2, Some(1), T).expect("aviso");
+        assert_eq!(a.threshold, 80);
+        // 79,0 se muestra como 79 %: todavía no.
+        let mut fired = Vec::new();
+        assert!(check(&mut fired, Limit::Session, 79.0, Some(1), T).is_none());
+    }
+
+    #[test]
     fn texts() {
         let a = Alert {
             limit: Limit::Session,
@@ -150,6 +164,6 @@ mod tests {
             percent: 82.4,
         };
         assert_eq!(a.title(), "Claude: 80 % de la sesión de 5 h");
-        assert!(a.body().contains("82 %"));
+        assert!(a.body().contains("83 %"));
     }
 }

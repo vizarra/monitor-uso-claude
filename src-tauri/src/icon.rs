@@ -47,13 +47,18 @@ const TEXT: (u8, u8, u8) = (255, 255, 255);
 /// Pista del anillo: gris semitransparente, visible sobre fondo claro y oscuro.
 const TRACK: (u8, u8, u8, u8) = (128, 128, 128, 140);
 
-/// Porcentaje que se muestra: redondeado y limitado a 0–100.
+/// Margen para el redondeo hacia arriba: 0,56 × 100 da 56,000…01 en coma
+/// flotante y no debe mostrarse como 57.
+const CEIL_EPSILON: f64 = 1e-9;
+
+/// Porcentaje que se muestra: redondeado hacia arriba (como claude.ai) y
+/// limitado a 0–100. Así nunca se muestra menos uso del que hay.
 pub fn displayed_percent(percent: f64) -> u8 {
     if percent.is_nan() {
         return 0;
     }
     // Tras el `clamp` el valor cabe en u8, así que la conversión no trunca.
-    percent.clamp(0.0, 100.0).round() as u8
+    (percent.clamp(0.0, 100.0) - CEIL_EPSILON).ceil().max(0.0) as u8
 }
 
 /// Nivel según el porcentaje mostrado, para que el color siempre coincida
@@ -288,10 +293,24 @@ mod tests {
 
     #[test]
     fn color_follows_displayed_number() {
-        // 79,6 se muestra como 80: debe ser rojo, no naranja.
-        assert_eq!(displayed_percent(79.6), 80);
-        assert_eq!(level_for(displayed_percent(79.6)), Level::High);
-        assert_eq!(level_for(displayed_percent(49.4)), Level::Low);
+        // 79,2 se muestra como 80: debe ser rojo, no naranja.
+        assert_eq!(displayed_percent(79.2), 80);
+        assert_eq!(level_for(displayed_percent(79.2)), Level::High);
+        assert_eq!(level_for(displayed_percent(49.0)), Level::Low);
+        assert_eq!(level_for(displayed_percent(49.4)), Level::Medium);
+    }
+
+    #[test]
+    fn displayed_percent_rounds_up_without_float_noise() {
+        assert_eq!(displayed_percent(56.4), 57);
+        assert_eq!(displayed_percent(0.564 * 100.0), 57);
+        // 0,56 × 100 = 56,00000000000001 en coma flotante: sigue siendo 56.
+        assert_eq!(displayed_percent(0.56 * 100.0), 56);
+        assert_eq!(displayed_percent(0.57 * 100.0), 57);
+        assert_eq!(displayed_percent(0.0), 0);
+        assert_eq!(displayed_percent(0.1), 1);
+        assert_eq!(displayed_percent(99.2), 100);
+        assert_eq!(displayed_percent(100.0), 100);
     }
 
     #[test]
@@ -349,9 +368,11 @@ mod tests {
 
     #[test]
     fn labels() {
-        assert_eq!(label(7.2), "7");
+        assert_eq!(label(7.2), "8");
         assert_eq!(label(42.0), "42");
-        assert_eq!(label(99.4), "99");
+        assert_eq!(label(98.6), "99");
+        // Redondeado hacia arriba, 99,4 ya se muestra como lleno.
+        assert_eq!(label(99.4), "!");
         assert_eq!(label(100.0), "!");
     }
 

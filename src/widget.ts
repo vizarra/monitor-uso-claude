@@ -34,7 +34,8 @@ function sessionPercent(snapshot: Snapshot): number | null {
   if (!metric || metric.value.kind !== "percent" || !Number.isFinite(metric.value.value)) {
     return null;
   }
-  return Math.min(100, Math.max(0, Math.round(metric.value.value)));
+  // Redondeo hacia arriba, igual que `displayed_percent` en icon.rs.
+  return Math.max(0, Math.ceil(Math.min(100, Math.max(0, metric.value.value)) - 1e-9));
 }
 
 // Mismos umbrales que `level_for` en icon.rs.

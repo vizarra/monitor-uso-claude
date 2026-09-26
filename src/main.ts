@@ -69,10 +69,16 @@ function $<T extends HTMLElement>(selector: string): T {
   return node;
 }
 
+// Redondeo hacia arriba, igual que `displayed_percent` en icon.rs (y que
+// claude.ai). El margen evita que 0,56 × 100 = 56,000…01 se vea como 57.
+function displayedPercent(value: number): number {
+  return Math.max(0, Math.ceil(Math.min(100, Math.max(0, value)) - 1e-9));
+}
+
 function formatValue(v: MetricValue): string {
   switch (v.kind) {
     case "percent":
-      return `${Math.round(v.value)} %`;
+      return `${displayedPercent(v.value)} %`;
     case "tokens":
       return numberFmt.format(v.value);
     case "usdCents":

@@ -860,7 +860,7 @@ mod tests {
         );
         assert_eq!(
             tooltip_text(&snap),
-            "Uso de Claude\nSesión 5 h: 88 %\nSemana: 64 %\nClaude Code: 64,4 M tokens"
+            "Uso de Claude\nSesión 5 h: 88 %\nSemana: 65 %\nClaude Code: 64,4 M tokens"
         );
         // Windows corta los tooltips de más de 128 caracteres.
         assert!(tooltip_text(&snap).chars().count() < 128);
