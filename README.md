@@ -72,16 +72,18 @@ La app vive en la barra de menús, sin icono en el Dock.
 
 ### Linux
 
-Hay paquete `.deb`, `.rpm` y `.AppImage`. La bandeja depende de **`libayatana-appindicator`**:
+Hay paquete `.deb`, `.rpm` y `.AppImage`. En **Ubuntu 24.04** no hace falta nada más: ya trae todo lo necesario para la bandeja. En otras distribuciones, la bandeja depende de **`libayatana-appindicator`**:
 
 ```bash
-# Debian/Ubuntu
+# Debian y derivadas (Ubuntu ya lo trae)
 sudo apt install libayatana-appindicator3-1
 ```
 
-- **GNOME** no muestra iconos de bandeja de serie: instala la extensión **[AppIndicator and KStatusNotifierItem Support](https://extensions.gnome.org/extension/615/appindicator-support/)**.
+- **GNOME sin los ajustes de Ubuntu** (Debian, Fedora…) no muestra iconos de bandeja de serie: instala la extensión **[AppIndicator and KStatusNotifierItem Support](https://extensions.gnome.org/extension/615/appindicator-support/)**. Ubuntu la trae activada.
 - En Linux el icono de la bandeja no recibe clics ni muestra el resumen al pasar el ratón (AppIndicator no lo permite): la ventana se abre con **clic derecho → Abrir**.
 - La Admin key se guarda en el llavero del escritorio (Secret Service: GNOME Keyring o KWallet).
+- Con **Wayland** (lo normal en Ubuntu) las apps no pueden colocar sus ventanas: la ventana de detalle y el mini-widget se abren arriba a la izquierda y el widget no recuerda su posición. Mientras la ventana está abierta, la app aparece también en el dock.
+- **Fallo conocido:** en Linux el mini-widget sale mucho más grande de lo previsto (unos 200 px en vez de 64 px).
 
 ## Requisitos
 
@@ -118,7 +120,7 @@ En reposo, con la ventana cerrada, la app es un solo proceso: unos **20 MB de RA
 | Sistema | Estado | Detalles |
 | --- | --- | --- |
 | **Windows 10/11** | ✅ Probado | Uso diario. |
-| **Ubuntu 24.04** | 🧪 En pruebas | Compila en CI; pendiente de probar en un equipo real. |
+| **Ubuntu 24.04** | ✅ Probado | En máquina virtual (GNOME, Wayland): bandeja, ventana, llavero y arranque con el sistema. Pendiente: sesión y semana con datos reales, y alertas. El mini-widget sale demasiado grande. |
 | **Ubuntu 22.04** | 🧪 En pruebas | Compila en CI; pendiente de confirmar que arranca (versión de `glibc`). |
 | **macOS (Apple Silicon)** | 🧪 En pruebas | Compila en CI; pendiente de verificar la lectura de credenciales del llavero. |
 | **Otras distribuciones Linux** | ❔ Sin probar | Deberían funcionar con `libayatana-appindicator` instalado. |
