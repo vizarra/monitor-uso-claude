@@ -41,10 +41,14 @@ jobs:
       - run: npm ci
 
       # Compila, empaqueta (msi/exe, dmg, deb/AppImage) y sube los archivos
-      # al borrador de la release de esta etiqueta. Sin firma de código.
+      # al borrador de la release de esta etiqueta. Sin firma de código, pero
+      # con firma de actualizaciones: genera los .sig y el latest.json que
+      # consulta "Buscar actualizaciones".
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           tagName: ${{ github.ref_name }}
           releaseName: Monitor de uso de Claude ${{ github.ref_name }}
@@ -69,3 +73,6 @@ jobs:
           # Nombres sin versión para que los enlaces del README
           # (releases/latest/download/...) sirvan para todas las versiones.
           assetNamePattern: "monitor-uso-claude_[platform]_[arch][setup][ext]"
+          # En Windows, latest.json apunta al instalador -setup.exe (el que
+          # recomienda el README) y no al .msi, para no mezclar instalaciones.
+          updaterJsonPreferNsis: true

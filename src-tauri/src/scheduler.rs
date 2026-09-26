@@ -13,7 +13,7 @@ use tokio::time::{sleep_until, timeout, Instant};
 
 use crate::providers::{now_ms, Provider, ProviderError, ProviderId, SectionState};
 
-/// Intervalo mínimo entre sondeos, también para "Actualizar" a mano.
+/// Intervalo mínimo entre sondeos, también para "Recargar datos" a mano.
 pub const MIN_INTERVAL: Duration = Duration::from_secs(60);
 /// Intervalo por defecto.
 pub const DEFAULT_INTERVAL: Duration = Duration::from_secs(180);

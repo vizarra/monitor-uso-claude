@@ -233,6 +233,45 @@ async function dismissPinHint(): Promise<void> {
   }
 }
 
+// Solo se consulta GitHub al pulsar el botón; nunca en segundo plano.
+async function checkUpdate(): Promise<void> {
+  const check = $<HTMLButtonElement>("#check-update");
+  const install = $<HTMLButtonElement>("#install-update");
+  check.disabled = true;
+  install.hidden = true;
+  showMessage("Buscando actualizaciones…");
+  try {
+    const version = await invoke<string | null>("check_update");
+    if (version === null) {
+      showMessage("Ya tienes la última versión");
+    } else {
+      showMessage(`Hay una versión nueva: ${version}`);
+      install.hidden = false;
+    }
+  } catch (e) {
+    showMessage(String(e), true);
+  } finally {
+    check.disabled = false;
+  }
+}
+
+async function installUpdate(): Promise<void> {
+  const check = $<HTMLButtonElement>("#check-update");
+  const install = $<HTMLButtonElement>("#install-update");
+  check.disabled = true;
+  install.disabled = true;
+  showMessage("Descargando e instalando… la app se reiniciará");
+  try {
+    await invoke("install_update");
+  } catch (e) {
+    showMessage(String(e), true);
+    install.hidden = true;
+  } finally {
+    check.disabled = false;
+    install.disabled = false;
+  }
+}
+
 function toggleSettings(): void {
   const form = $<HTMLFormElement>("#settings");
   const opening = form.hidden;
@@ -266,6 +305,8 @@ window.addEventListener("DOMContentLoaded", async () => {
   $<HTMLButtonElement>("#open-repo").addEventListener("click", () => {
     invoke("open_repo").catch((e) => showMessage(String(e), true));
   });
+  $<HTMLButtonElement>("#check-update").addEventListener("click", () => void checkUpdate());
+  $<HTMLButtonElement>("#install-update").addEventListener("click", () => void installUpdate());
   getVersion()
     .then((version) => ($<HTMLSpanElement>("#app-version").textContent = version))
     .catch(() => undefined);

@@ -29,8 +29,16 @@ Los instaladores no están firmados, así que la primera vez el sistema mostrar�
 
 - **El anillo** refleja el uso de la sesión de 5 h: verde por debajo del 50 %, naranja hasta el 80 % y rojo a partir del 80 %. Gris con una raya significa "sin datos" (aún no hay lectura o la consulta falló). Con la sonda en pausa (ventana de 5 h cerrada y sin actividad), el anillo aparece vacío: 0 % "sin actividad".
 - **Pasa el ratón** por encima para ver un resumen, o **haz clic** para abrir la ventana con el desglose. La ventana se cierra al hacer clic fuera.
-- **Clic derecho:** Abrir, Actualizar y Salir.
-- **⚙ Ajustes:** intervalo de consulta (de 1 a 60 min), secciones visibles, número dentro del icono, alertas, arranque con el sistema, mini-widget, Admin key y "Acerca de" (versión y enlace al repo).
+- **⟳ Recargar datos** (en la ventana, o con clic derecho en el icono): consulta al momento, aunque la sonda esté en pausa.
+- **Clic derecho:** Abrir, Recargar datos y Salir.
+- **⚙ Ajustes:** intervalo de consulta (de 1 a 60 min), secciones visibles, número dentro del icono, alertas, arranque con el sistema, mini-widget, Admin key y "Acerca de" (versión, enlace al repo y actualizaciones).
+
+### Actualizaciones
+
+En **Ajustes → Acerca de → Buscar actualizaciones**, la app consulta la última release en GitHub. Si hay una versión nueva, **Instalar y reiniciar** la descarga, comprueba su firma, la instala y vuelve a abrir la app. Nunca lo comprueba por su cuenta: solo al pulsar el botón.
+
+- Funciona a partir de la versión 0.1.3: si tienes una anterior, instala la nueva a mano una vez.
+- En Linux solo está garantizado con la **AppImage**; con el `.deb` o el `.rpm`, actualiza descargando el paquete nuevo.
 
 ### Alertas
 
@@ -91,11 +99,11 @@ sudo apt install libayatana-appindicator3-1
 
 Detalles técnicos en [`docs/fuentes-datos.md`](docs/fuentes-datos.md).
 
-**La sonda cuenta como uso**, así que la app **solo la hace cuando tu ventana de 5 h ya está abierta** o cuando pulsas Actualizar. Nunca abre una ventana de 5 h por su cuenta: si la ventana se cerró y no usas Claude Code, la sesión aparece al 0 % "sin actividad" hasta que vuelvas a usarlo. El uso solo desde claude.ai en el navegador no se detecta hasta pulsar Actualizar.
+**La sonda cuenta como uso**, así que la app **solo la hace cuando tu ventana de 5 h ya está abierta** o cuando pulsas ⟳ Recargar datos. Nunca abre una ventana de 5 h por su cuenta: si la ventana se cerró y no usas Claude Code, la sesión aparece al 0 % "sin actividad" hasta que vuelvas a usarlo. El uso solo desde claude.ai en el navegador no se detecta hasta pulsar ⟳.
 
 ## Privacidad
 
-- Solo se conecta a **`api.anthropic.com`**. Sin telemetría.
+- Solo se conecta a **`api.anthropic.com`** y, cuando pulsas "Buscar actualizaciones", a **`github.com`**. Sin telemetría.
 - **Token OAuth de Claude Code:** solo lectura. Nunca se guarda, se muestra ni se registra; solo viaja en la cabecera de la petición.
 - **Admin key:** solo en el llavero del sistema (Credential Manager, Keychain o Secret Service). Ninguna pantalla la vuelve a mostrar.
 - **Conversaciones:** de los JSONL solo se leen los campos de uso. El contenido de los mensajes nunca se guarda ni se muestra.

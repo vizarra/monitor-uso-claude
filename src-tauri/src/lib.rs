@@ -20,6 +20,7 @@ use tauri::{
 };
 use tauri_plugin_autostart::{MacosLauncher, ManagerExt as _};
 use tauri_plugin_notification::NotificationExt as _;
+use tauri_plugin_updater::{Update, UpdaterExt as _};
 use tokio::sync::Notify;
 
 use alerts::Limit;
@@ -63,6 +64,9 @@ struct AppState {
     persisted: Mutex<PersistedState>,
     /// Tamaño del icono en píxeles, calculado al arrancar.
     icon_size: AtomicU32,
+    /// Actualización encontrada con "Buscar actualizaciones", a la espera
+    /// de que el usuario pulse "Instalar".
+    pending_update: Mutex<Option<Update>>,
 }
 
 /// Bloquea un mutex aunque otro hilo haya entrado en pánico con él tomado:
@@ -165,6 +169,37 @@ fn open_repo() -> Result<(), String> {
         .map_err(|_| "no se pudo abrir el navegador".to_string())
 }
 
+/// Busca una versión nueva en las releases de GitHub. Solo se llama al
+/// pulsar el botón: la app nunca lo comprueba por su cuenta. Devuelve la
+/// versión nueva o `None` si ya está al día.
+#[tauri::command]
+async fn check_update(app: AppHandle) -> Result<Option<String>, String> {
+    let update = app
+        .updater()
+        .map_err(|_| "el actualizador no está disponible".to_string())?
+        .check()
+        .await
+        .map_err(|_| "no se pudo comprobar si hay actualizaciones".to_string())?;
+    let version = update.as_ref().map(|u| u.version.clone());
+    *lock(&app.state::<AppState>().pending_update) = update;
+    Ok(version)
+}
+
+/// Descarga e instala la versión encontrada por `check_update` (la firma se
+/// verifica con la clave pública de tauri.conf.json) y reinicia la app. En
+/// Windows el instalador cierra la app por su cuenta antes de reiniciar.
+#[tauri::command]
+async fn install_update(app: AppHandle) -> Result<(), String> {
+    let update = lock(&app.state::<AppState>().pending_update)
+        .take()
+        .ok_or_else(|| "primero busca actualizaciones".to_string())?;
+    update
+        .download_and_install(|_, _| {}, || {})
+        .await
+        .map_err(|_| "no se pudo instalar la actualización".to_string())?;
+    app.restart()
+}
+
 /// El mini-widget abre la ventana de detalle al hacer clic. Es `async` por
 /// el mismo motivo que `save_settings`: puede tener que crear la ventana.
 #[tauri::command]
@@ -202,7 +237,7 @@ async fn clear_admin_key(app: AppHandle) -> Result<(), String> {
     Ok(())
 }
 
-/// "Actualizar": fuerza la sonda aunque esté en pausa y adelanta el sondeo
+/// "Recargar datos": fuerza la sonda aunque esté en pausa y adelanta el sondeo
 /// (el scheduler respeta igualmente el mínimo de 60 s).
 fn request_refresh(state: &AppState) {
     state.shared.request_probe();
@@ -567,6 +602,7 @@ pub fn run() {
         store,
         persisted: Mutex::new(persisted),
         icon_size: AtomicU32::new(icon::tray_icon_size(1.0)),
+        pending_update: Mutex::new(None),
     };
 
     let app = tauri::Builder::default()
@@ -575,6 +611,7 @@ pub fn run() {
             MacosLauncher::LaunchAgent,
             None,
         ))
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .manage(state)
         .invoke_handler(tauri::generate_handler![
             get_snapshot,
@@ -587,6 +624,8 @@ pub fn run() {
             pin_hint_visible,
             open_taskbar_settings,
             open_repo,
+            check_update,
+            install_update,
             open_main_window
         ])
         .on_window_event(|window, event| match (window.label(), event) {
@@ -624,7 +663,7 @@ pub fn run() {
 
             // "Abrir" hace falta en Linux, donde la bandeja no recibe clics.
             let open = MenuItem::with_id(app, "open", "Abrir", true, None::<&str>)?;
-            let refresh = MenuItem::with_id(app, "refresh", "Actualizar", true, None::<&str>)?;
+            let refresh = MenuItem::with_id(app, "refresh", "Recargar datos", true, None::<&str>)?;
             let quit = MenuItem::with_id(app, "quit", "Salir", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&open, &refresh, &quit])?;
 

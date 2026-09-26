@@ -1,6 +1,6 @@
 [package]
 name = "monitor-uso-claude"
-version = "0.1.2"
+version = "0.1.3"
 description = "Monitor no oficial del uso de Claude en la bandeja del sistema"
 edition = "2021"
 license = "MIT"
@@ -29,6 +29,9 @@ tiny-skia = { version = "0.12", default-features = false, features = ["std", "si
 # Plugins oficiales de Tauri: alertas por umbral y arranque con el sistema.
 tauri-plugin-notification = "2"
 tauri-plugin-autostart = "2"
+# Actualizaciones solo al pulsar "Buscar actualizaciones". Sin `system-proxy`:
+# las features de reqwest se unifican y activaría el proxy también en la sonda.
+tauri-plugin-updater = { version = "2", default-features = false, features = ["rustls-tls", "zip"] }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["test-util"] }

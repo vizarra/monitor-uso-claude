@@ -172,7 +172,7 @@ fn limits_from_headers(headers: &HeaderMap) -> Limits {
 /// Decide si toca hacer la sonda. Cualquier petición cuenta como uso, así que
 /// sondear con la ventana cerrada abriría una nueva de 5 h. Solo se sondea
 /// cuando es seguro que hay una ventana abierta, o si el usuario pulsa
-/// "Actualizar".
+/// "Recargar datos".
 ///
 /// `checked_since` es el arranque de la app o la última sonda, lo que sea
 /// más reciente: actividad de Claude Code posterior significa que el usuario
@@ -344,7 +344,7 @@ impl Provider for SubscriptionProvider {
                 return match self.last() {
                     Some(last) => Ok(reading(&last, true, now)),
                     None => Err(ProviderError(
-                        "en pausa: no hay actividad reciente de Claude Code. Pulsa Actualizar para consultar".into(),
+                        "en pausa: no hay actividad reciente de Claude Code. Pulsa ⟳ para consultar".into(),
                     )),
                 };
             }

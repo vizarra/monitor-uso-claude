@@ -26,7 +26,7 @@ pub const SESSION_WINDOW_MS: u64 = 5 * 60 * 60 * 1000;
 pub struct Shared {
     /// Reinicio de la ventana de 5 h según la última sonda (ms Unix; 0 = desconocido).
     session_reset_ms: AtomicU64,
-    /// El usuario ha pulsado "Actualizar": la próxima sonda se hace aunque esté en pausa.
+    /// El usuario ha pulsado "Recargar datos": la próxima sonda se hace aunque esté en pausa.
     probe_requested: AtomicBool,
 }
 

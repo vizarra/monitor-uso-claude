@@ -12,7 +12,7 @@
       <header>
         <h1 id="title">Uso de Claude</h1>
         <div class="actions">
-          <button id="refresh" type="button" title="Actualizar">Actualizar</button>
+          <button id="refresh" type="button" title="Recargar datos" aria-label="Recargar datos">⟳</button>
           <button id="toggle-settings" type="button" title="Ajustes" aria-label="Ajustes">⚙</button>
         </div>
       </header>
@@ -89,6 +89,10 @@
           <legend>Acerca de</legend>
           <p class="hint">Versión <span id="app-version">…</span> · por vizarra</p>
           <button id="open-repo" type="button" class="link">github.com/vizarra/monitor-uso-claude</button>
+          <div class="row">
+            <button id="check-update" type="button">Buscar actualizaciones</button>
+            <button id="install-update" type="button" hidden>Instalar y reiniciar</button>
+          </div>
           <p class="hint">Proyecto personal no oficial, sin relación con Anthropic.</p>
         </fieldset>
 

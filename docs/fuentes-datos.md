@@ -46,7 +46,7 @@ content-type: application/json
 
 Consume una cantidad mínima de la cuota; por eso se hace como mucho una vez por intervalo.
 
-**Cuidado:** como cuenta como uso, una sonda con la ventana de 5 h cerrada abre una nueva. Por eso la app solo sondea si la ventana sigue abierta, si Claude Code ha escrito en sus JSONL después del cierre o si el usuario pulsa "Actualizar".
+**Cuidado:** como cuenta como uso, una sonda con la ventana de 5 h cerrada abre una nueva. Por eso la app solo sondea si la ventana sigue abierta, si Claude Code ha escrito en sus JSONL después del cierre o si el usuario pulsa ⟳ "Recargar datos".
 
 ### Cabeceras de la respuesta (HTTP 200)
 
