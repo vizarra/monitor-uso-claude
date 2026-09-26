@@ -16,7 +16,7 @@ interface Snapshot {
 }
 
 interface Settings {
-  showPercentInIcon: boolean;
+  showPercentInWidget: boolean;
 }
 
 const RADIUS = 26;
@@ -87,10 +87,10 @@ window.addEventListener("DOMContentLoaded", async () => {
     render();
   });
   await listen<Settings>("settings-updated", (event) => {
-    showNumber = event.payload.showPercentInIcon;
+    showNumber = event.payload.showPercentInWidget;
     render();
   });
-  showNumber = (await invoke<Settings>("get_settings")).showPercentInIcon;
+  showNumber = (await invoke<Settings>("get_settings")).showPercentInWidget;
   lastSnapshot = await invoke<Snapshot>("get_snapshot");
   render();
 });

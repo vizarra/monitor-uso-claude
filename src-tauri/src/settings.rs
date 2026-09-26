@@ -24,6 +24,30 @@ const MAX_INTERVAL: Duration = Duration::from_secs(60 * 60);
 /// Número máximo de umbrales de alerta.
 const MAX_THRESHOLDS: usize = 3;
 
+/// Tamaño del mini-widget.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum WidgetSize {
+    Small,
+    Large,
+    /// También se usa si el JSON trae un valor desconocido, para no perder
+    /// el resto de ajustes (`serde(other)` exige que sea la última variante).
+    #[default]
+    #[serde(other)]
+    Medium,
+}
+
+impl WidgetSize {
+    /// Lado del widget en píxeles lógicos.
+    pub fn logical_px(self) -> f64 {
+        match self {
+            Self::Small => 40.0,
+            Self::Medium => 52.0,
+            Self::Large => 64.0,
+        }
+    }
+}
+
 /// Ajustes que el usuario cambia desde la ventana.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
@@ -41,6 +65,9 @@ pub struct Settings {
     pub launch_at_login: bool,
     /// Mini-widget flotante con el anillo, para pantallas sin bandeja.
     pub show_widget: bool,
+    /// Muestra el porcentaje en el centro del mini-widget.
+    pub show_percent_in_widget: bool,
+    pub widget_size: WidgetSize,
     /// El usuario ha cerrado el aviso de cómo fijar el icono (Windows).
     pub pin_hint_dismissed: bool,
 }
@@ -56,6 +83,8 @@ impl Default for Settings {
             alert_thresholds: vec![80, 95],
             launch_at_login: false,
             show_widget: false,
+            show_percent_in_widget: true,
+            widget_size: WidgetSize::Medium,
             pin_hint_dismissed: false,
         }
     }
@@ -177,6 +206,40 @@ mod tests {
         assert_eq!(store.load_state(), PersistedState::default());
         assert_eq!(Settings::default().interval_secs, 180);
         assert!(!Settings::default().show_percent_in_icon);
+    }
+
+    #[test]
+    fn widget_settings_defaults_and_sizes() {
+        let s = Settings::default();
+        assert!(s.show_percent_in_widget);
+        assert_eq!(s.widget_size, WidgetSize::Medium);
+        assert_eq!(WidgetSize::Small.logical_px(), 40.0);
+        assert_eq!(WidgetSize::Medium.logical_px(), 52.0);
+        assert_eq!(WidgetSize::Large.logical_px(), 64.0);
+    }
+
+    #[test]
+    fn old_settings_file_gets_widget_defaults() {
+        // Un settings.json de la 0.1.3, sin los campos nuevos del widget.
+        let old = r#"{"intervalSecs": 300, "showWidget": true, "showPercentInIcon": true}"#;
+        let s: Settings = serde_json::from_str(old).expect("parsear");
+        assert_eq!(s.interval_secs, 300);
+        assert!(s.show_widget);
+        assert!(s.show_percent_in_widget);
+        assert_eq!(s.widget_size, WidgetSize::Medium);
+    }
+
+    #[test]
+    fn widget_size_serde() {
+        let json = serde_json::to_string(&WidgetSize::Large).expect("serializar");
+        assert_eq!(json, r#""large""#);
+        let s: Settings = serde_json::from_str(r#"{"widgetSize": "small"}"#).expect("parsear");
+        assert_eq!(s.widget_size, WidgetSize::Small);
+        // Un valor desconocido no invalida el resto de ajustes.
+        let s: Settings = serde_json::from_str(r#"{"widgetSize": "enorme", "intervalSecs": 600}"#)
+            .expect("parsear");
+        assert_eq!(s.widget_size, WidgetSize::Medium);
+        assert_eq!(s.interval_secs, 600);
     }
 
     #[test]

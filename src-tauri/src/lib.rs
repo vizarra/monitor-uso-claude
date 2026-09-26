@@ -30,13 +30,11 @@ use providers::subscription::SubscriptionProvider;
 use providers::tokens::TokensProvider;
 use providers::{now_ms, MetricValue, Provider, ProviderId, SectionState, Shared};
 use scheduler::{IntervalHandle, Scheduler, Snapshot};
-use settings::{PersistedState, Settings, Store};
+use settings::{PersistedState, Settings, Store, WidgetSize};
 
 const TRAY_ID: &str = "main";
 const WINDOW_LABEL: &str = "main";
 const WIDGET_LABEL: &str = "widget";
-/// Lado del mini-widget en píxeles lógicos.
-const WIDGET_SIZE: f64 = 64.0;
 /// Evento que recibe la ventana cada vez que hay datos nuevos.
 const SNAPSHOT_EVENT: &str = "snapshot-updated";
 /// Evento que recibe la ventana cuando cambian los ajustes.
@@ -110,7 +108,7 @@ async fn save_settings(app: AppHandle, settings: Settings) -> Result<Settings, S
     *lock(&state.settings) = settings.clone();
     let snapshot = lock(&state.snapshot).clone();
     update_tray(&app, &snapshot);
-    sync_widget(&app, settings.show_widget);
+    sync_widget(&app, &settings);
     let _ = app.emit(SETTINGS_EVENT, &settings);
     Ok(settings)
 }
@@ -371,33 +369,67 @@ fn process_alerts(app: &AppHandle, snapshot: &Snapshot) {
     }
 }
 
-/// Crea o cierra el mini-widget según el ajuste. Cerrarlo (en vez de
-/// ocultarlo) libera la memoria de su webview.
-fn sync_widget(app: &AppHandle, show: bool) {
-    match (show, app.get_webview_window(WIDGET_LABEL)) {
+/// Crea, redimensiona o cierra el mini-widget según los ajustes. Cerrarlo
+/// (en vez de ocultarlo) libera la memoria de su webview.
+fn sync_widget(app: &AppHandle, settings: &Settings) {
+    match (settings.show_widget, app.get_webview_window(WIDGET_LABEL)) {
         (true, None) => {
-            let _ = create_widget(app);
+            let _ = create_widget(app, settings.widget_size);
+        }
+        (true, Some(widget)) => {
+            let _ = set_widget_size(&widget, settings.widget_size);
         }
         (false, Some(widget)) => {
             save_persisted(app);
             let _ = widget.destroy();
         }
-        _ => {}
+        (false, None) => {}
     }
 }
 
-fn create_widget(app: &AppHandle) -> tauri::Result<()> {
+/// Cambia el tamaño del widget ya creado. En Linux hay que quitar antes los
+/// límites de tamaño, que se fijan iguales al tamaño (ver `create_widget`).
+fn set_widget_size(widget: &WebviewWindow, size: WidgetSize) -> tauri::Result<()> {
+    let side = size.logical_px();
+    let logical = tauri::LogicalSize::new(side, side);
+    #[cfg(target_os = "linux")]
+    {
+        widget.set_min_size(None::<tauri::LogicalSize<f64>>)?;
+        widget.set_max_size(None::<tauri::LogicalSize<f64>>)?;
+    }
+    widget.set_size(logical)?;
+    #[cfg(target_os = "linux")]
+    {
+        widget.set_min_size(Some(logical))?;
+        widget.set_max_size(Some(logical))?;
+    }
+    Ok(())
+}
+
+fn create_widget(app: &AppHandle, size: WidgetSize) -> tauri::Result<()> {
+    let side = size.logical_px();
     let builder =
         WebviewWindowBuilder::new(app, WIDGET_LABEL, WebviewUrl::App("widget.html".into()))
             .title("Uso de Claude")
-            .inner_size(WIDGET_SIZE, WIDGET_SIZE)
-            .resizable(false)
-            .decorations(false)
-            .always_on_top(true)
-            .skip_taskbar(true)
-            .shadow(false)
-            .focused(false)
-            .visible(false);
+            .inner_size(side, side);
+    // En Linux, GTK da a las ventanas no redimensionables el tamaño natural
+    // del webview (unos 200 px) e ignora el pedido. Se deja redimensionable
+    // con el mínimo y el máximo iguales al tamaño: sin bordes, el usuario no
+    // puede cambiarlo igualmente.
+    #[cfg(target_os = "linux")]
+    let builder = builder
+        .resizable(true)
+        .min_inner_size(side, side)
+        .max_inner_size(side, side);
+    #[cfg(not(target_os = "linux"))]
+    let builder = builder.resizable(false);
+    let builder = builder
+        .decorations(false)
+        .always_on_top(true)
+        .skip_taskbar(true)
+        .shadow(false)
+        .focused(false)
+        .visible(false);
     // En macOS la transparencia exige una API privada; allí el widget
     // simplemente tiene fondo.
     #[cfg(not(target_os = "macos"))]
@@ -688,7 +720,7 @@ pub fn run() {
             if handle.autolaunch().is_enabled().ok() != Some(settings.launch_at_login) {
                 let _ = apply_autostart(handle, settings.launch_at_login);
             }
-            sync_widget(handle, settings.show_widget);
+            sync_widget(handle, &settings);
 
             let icon = tray_image(&initial, icon_size, show_number)
                 .or_else(|| app.default_window_icon().cloned())

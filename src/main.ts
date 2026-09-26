@@ -33,7 +33,15 @@ interface Settings {
   alertThresholds: number[];
   launchAtLogin: boolean;
   showWidget: boolean;
+  showPercentInWidget: boolean;
+  widgetSize: WidgetSize;
   pinHintDismissed: boolean;
+}
+
+type WidgetSize = "small" | "medium" | "large";
+
+function parseWidgetSize(value: string): WidgetSize {
+  return value === "small" || value === "large" ? value : "medium";
 }
 
 const TITLES: Record<ProviderId, string> = {
@@ -147,6 +155,8 @@ function fillSettingsForm(s: Settings): void {
   $<HTMLInputElement>("#alert-thresholds").value = s.alertThresholds.join(", ");
   $<HTMLInputElement>("#launch-at-login").checked = s.launchAtLogin;
   $<HTMLInputElement>("#show-widget").checked = s.showWidget;
+  $<HTMLInputElement>("#show-percent-widget").checked = s.showPercentInWidget;
+  $<HTMLSelectElement>("#widget-size").value = s.widgetSize;
 }
 
 // Convierte "80, 95" en [80, 95]; el backend valida el rango y el orden.
@@ -167,6 +177,8 @@ function readSettingsForm(): Settings {
     alertThresholds: parseThresholds($<HTMLInputElement>("#alert-thresholds").value),
     launchAtLogin: $<HTMLInputElement>("#launch-at-login").checked,
     showWidget: $<HTMLInputElement>("#show-widget").checked,
+    showPercentInWidget: $<HTMLInputElement>("#show-percent-widget").checked,
+    widgetSize: parseWidgetSize($<HTMLSelectElement>("#widget-size").value),
     pinHintDismissed: settings?.pinHintDismissed ?? false,
   };
 }
