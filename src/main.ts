@@ -1,3 +1,4 @@
+import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 
@@ -262,6 +263,12 @@ window.addEventListener("DOMContentLoaded", async () => {
     invoke("open_taskbar_settings").catch((e) => showMessage(String(e), true));
   });
   $<HTMLButtonElement>("#dismiss-pin-hint").addEventListener("click", () => void dismissPinHint());
+  $<HTMLButtonElement>("#open-repo").addEventListener("click", () => {
+    invoke("open_repo").catch((e) => showMessage(String(e), true));
+  });
+  getVersion()
+    .then((version) => ($<HTMLSpanElement>("#app-version").textContent = version))
+    .catch(() => undefined);
 
   await listen<Snapshot>("snapshot-updated", (event) => {
     lastSnapshot = event.payload;

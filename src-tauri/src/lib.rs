@@ -145,6 +145,26 @@ fn open_taskbar_settings() -> Result<(), String> {
     }
 }
 
+/// Dirección del repo público, enlazada desde "Acerca de".
+const REPO_URL: &str = "https://github.com/vizarra/monitor-uso-claude";
+
+/// Abre el repo en el navegador. La URL es fija: el frontend no puede elegirla.
+#[tauri::command]
+fn open_repo() -> Result<(), String> {
+    #[cfg(target_os = "windows")]
+    let program = "explorer.exe";
+    #[cfg(target_os = "macos")]
+    let program = "open";
+    #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+    let program = "xdg-open";
+
+    std::process::Command::new(program)
+        .arg(REPO_URL)
+        .spawn()
+        .map(|_| ())
+        .map_err(|_| "no se pudo abrir el navegador".to_string())
+}
+
 /// El mini-widget abre la ventana de detalle al hacer clic. Es `async` por
 /// el mismo motivo que `save_settings`: puede tener que crear la ventana.
 #[tauri::command]
@@ -566,6 +586,7 @@ pub fn run() {
             clear_admin_key,
             pin_hint_visible,
             open_taskbar_settings,
+            open_repo,
             open_main_window
         ])
         .on_window_event(|window, event| match (window.label(), event) {

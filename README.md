@@ -1,22 +1,25 @@
 # Monitor de uso de Claude
 
+> [!IMPORTANT]
+> **Proyecto personal y no oficial.** Esta app la he creado yo por mi cuenta y la comparto gratis, sin ánimo de lucro. No está hecha, respaldada ni revisada por Anthropic, la empresa que desarrolla Claude. "Claude" y "Anthropic" son marcas de Anthropic y aquí solo se usan para indicar con qué servicio funciona la app.
+
+> Usa una fuente no documentada (ver [Fuentes de datos](#fuentes-de-datos)) que puede dejar de funcionar en cualquier momento. El icono es propio: no usa logos ni recursos gráficos de Anthropic o Claude.
+
 App de escritorio que vive en la bandeja del sistema y muestra, con un anillo de color, cuánto llevas gastado de Claude:
 
 - **Plan Pro/Max:** porcentaje usado de la sesión de 5 h y del límite semanal, con la hora de reinicio de cada uno. Estos límites son compartidos entre claude.ai y Claude Code.
 - **Claude Code:** tokens consumidos en la sesión actual (entrada, salida y caché).
 - **API de pago por uso** (opcional): tokens y coste del mes, con una Admin key de organización.
 
-> **Herramienta personal y no oficial**, sin relación con Anthropic. Usa una fuente no documentada (ver [Fuentes de datos](#fuentes-de-datos)) que puede dejar de funcionar en cualquier momento. El icono es propio: no usa logos ni recursos gráficos de Anthropic o Claude.
-
 ## Descargar
 
 | Sistema | Descarga |
 | --- | --- |
 | **Windows 10/11** | [**Instalador (.exe)**](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_windows_x64-setup.exe) · alternativa: [.msi](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_windows_x64.msi) |
-| **macOS** (Apple Silicon: M1, M2…) | [**Imagen de disco (.dmg)**](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_darwin_aarch64.dmg) |
-| **Linux:** Ubuntu, Debian, Mint… | [**Paquete .deb**](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_linux_amd64.deb) |
-| **Linux:** Fedora, openSUSE… | [**Paquete .rpm**](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_linux_x86_64.rpm) |
-| **Linux:** otras distribuciones | [**AppImage**](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_linux_amd64.AppImage) (sin instalar: dale permiso de ejecución y ábrela) |
+| **macOS** (Apple Silicon: M1, M2…) · *experimental* | [**Imagen de disco (.dmg)**](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_darwin_aarch64.dmg) |
+| **Linux:** Ubuntu, Debian, Mint… · *experimental* | [**Paquete .deb**](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_linux_amd64.deb) |
+| **Linux:** Fedora, openSUSE… · *experimental* | [**Paquete .rpm**](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_linux_x86_64.rpm) |
+| **Linux:** otras distribuciones · *experimental* | [**AppImage**](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_linux_amd64.AppImage) (sin instalar: dale permiso de ejecución y ábrela) |
 
 Los enlaces descargan siempre la última versión. Todas las versiones están en [Releases](https://github.com/vizarra/monitor-uso-claude/releases). No hay versión para Mac con procesador Intel.
 
@@ -27,7 +30,7 @@ Los instaladores no están firmados, así que la primera vez el sistema mostrar�
 - **El anillo** refleja el uso de la sesión de 5 h: verde por debajo del 50 %, naranja hasta el 80 % y rojo a partir del 80 %. Gris con una raya significa "sin datos" (aún no hay lectura o la consulta falló). Con la sonda en pausa (ventana de 5 h cerrada y sin actividad), el anillo aparece vacío: 0 % "sin actividad".
 - **Pasa el ratón** por encima para ver un resumen, o **haz clic** para abrir la ventana con el desglose. La ventana se cierra al hacer clic fuera.
 - **Clic derecho:** Abrir, Actualizar y Salir.
-- **⚙ Ajustes:** intervalo de consulta (de 1 a 60 min), secciones visibles, número dentro del icono, alertas, arranque con el sistema, mini-widget y Admin key.
+- **⚙ Ajustes:** intervalo de consulta (de 1 a 60 min), secciones visibles, número dentro del icono, alertas, arranque con el sistema, mini-widget, Admin key y "Acerca de" (versión y enlace al repo).
 
 ### Alertas
 
@@ -104,8 +107,16 @@ En reposo, con la ventana cerrada, la app es un solo proceso: unos **20 MB de RA
 
 ## Estado por plataforma
 
-- **Windows:** probado a diario.
-- **macOS y Linux:** compilan en CI, pero no se han probado en un equipo real. En particular, la lectura de credenciales del llavero de macOS está implementada según la documentación sin haberla verificado.
+| Sistema | Estado | Detalles |
+| --- | --- | --- |
+| **Windows 10/11** | ✅ Probado | Uso diario. |
+| **Ubuntu 24.04** | 🧪 En pruebas | Compila en CI; pendiente de probar en un equipo real. |
+| **Ubuntu 22.04** | 🧪 En pruebas | Compila en CI; pendiente de confirmar que arranca (versión de `glibc`). |
+| **macOS (Apple Silicon)** | 🧪 En pruebas | Compila en CI; pendiente de verificar la lectura de credenciales del llavero. |
+| **Otras distribuciones Linux** | ❔ Sin probar | Deberían funcionar con `libayatana-appindicator` instalado. |
+| **macOS (Intel)** | ❌ No disponible | No se genera versión para este procesador. |
+
+Si lo pruebas en un sistema marcado como "en pruebas", me ayuda mucho que abras un [issue](https://github.com/vizarra/monitor-uso-claude/issues) contando si funciona o qué falla.
 
 ## Desarrollo
 

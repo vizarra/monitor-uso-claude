@@ -61,7 +61,9 @@ jobs:
 
             Los instaladores no están firmados: la primera vez el sistema mostrará un aviso. Cómo continuar, en el [README](https://github.com/vizarra/monitor-uso-claude#instalación).
 
-            Herramienta personal no oficial, sin relación con Anthropic.
+            ---
+
+            > **Proyecto personal y no oficial**, sin relación con Anthropic. No está hecho, respaldado ni revisado por Anthropic. "Claude" y "Anthropic" son marcas de Anthropic y aquí solo se usan para indicar con qué servicio funciona la app.
           releaseDraft: true
           prerelease: false
           # Nombres sin versión para que los enlaces del README
