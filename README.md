@@ -8,6 +8,20 @@ App de escritorio que vive en la bandeja del sistema y muestra, con un anillo de
 
 > **Herramienta personal y no oficial**, sin relación con Anthropic. Usa una fuente no documentada (ver [Fuentes de datos](#fuentes-de-datos)) que puede dejar de funcionar en cualquier momento. El icono es propio: no usa logos ni recursos gráficos de Anthropic o Claude.
 
+## Descargar
+
+| Sistema | Descarga |
+| --- | --- |
+| **Windows 10/11** | [**Instalador (.exe)**](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_windows_x64-setup.exe) · alternativa: [.msi](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_windows_x64.msi) |
+| **macOS** (Apple Silicon: M1, M2…) | [**Imagen de disco (.dmg)**](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_darwin_aarch64.dmg) |
+| **Linux:** Ubuntu, Debian, Mint… | [**Paquete .deb**](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_linux_amd64.deb) |
+| **Linux:** Fedora, openSUSE… | [**Paquete .rpm**](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_linux_x86_64.rpm) |
+| **Linux:** otras distribuciones | [**AppImage**](https://github.com/vizarra/monitor-uso-claude/releases/latest/download/monitor-uso-claude_linux_amd64.AppImage) (sin instalar: dale permiso de ejecución y ábrela) |
+
+Los enlaces descargan siempre la última versión. Todas las versiones están en [Releases](https://github.com/vizarra/monitor-uso-claude/releases). No hay versión para Mac con procesador Intel.
+
+Los instaladores no están firmados, así que la primera vez el sistema mostrará un aviso: en [Instalación](#instalación) se explica cómo continuar en cada sistema.
+
 ## Cómo se usa
 
 - **El anillo** refleja el uso de la sesión de 5 h: verde por debajo del 50 %, naranja hasta el 80 % y rojo a partir del 80 %. Gris con una raya significa "sin datos" (aún no hay lectura o la consulta falló). Con la sonda en pausa (ventana de 5 h cerrada y sin actividad), el anillo aparece vacío: 0 % "sin actividad".
@@ -25,7 +39,7 @@ Windows 11 solo muestra la bandeja en la barra de la **pantalla principal**. Si 
 
 ## Instalación
 
-Descarga el instalador de tu sistema desde la página de **Releases** del repositorio.
+Descarga el instalador de tu sistema desde la tabla de [Descargar](#descargar).
 
 Los instaladores **no están firmados**, así que el sistema avisará la primera vez:
 
@@ -47,7 +61,7 @@ La app vive en la barra de menús, sin icono en el Dock.
 
 ### Linux
 
-Hay paquete `.deb` y `.AppImage`. La bandeja depende de **`libayatana-appindicator`**:
+Hay paquete `.deb`, `.rpm` y `.AppImage`. La bandeja depende de **`libayatana-appindicator`**:
 
 ```bash
 # Debian/Ubuntu
